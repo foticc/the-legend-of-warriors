@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://cpjflukl8xool"]
+
+[ext_resource type="Texture2D" uid="uid://cmqe3daeqop3s" path="res://art/Legacy-Fantasy - High Forest 2.0 (1)/Legacy-Fantasy - High Forest 2.3/Assets/Tree-Assets.png" id="1_7vcio"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dahlx"]
+texture = ExtResource("1_7vcio")
+
+[sub_resource type="TileSet" id="TileSet_nw866"]
+sources/0 = SubResource("TileSetAtlasSource_dahlx")
+
+[node name="World" type="Node2D"]
+
+[node name="map" type="Node2D" parent="."]
+
+[node name="land" type="TileMapLayer" parent="map"]
+tile_set = SubResource("TileSet_nw866")
