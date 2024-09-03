@@ -3,9 +3,10 @@ class_name StateMachine extends Node
 var current_state: int = -1:
 	set(state):
 		owner.transition_state(current_state,state)
-		print("from:",current_state,"to",state)
 		current_state = state
+		state_time = 0
 
+var state_time := 0
 
 func _ready() -> void:
 	await owner.ready
@@ -19,3 +20,4 @@ func _physics_process(delta: float) -> void:
 			break
 		current_state = next
 	owner.tick_physics(current_state,delta)
+	state_time+=delta
