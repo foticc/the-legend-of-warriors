@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4 uid="uid://i7eqduhb021h"]
+[gd_scene load_steps=10 format=4 uid="uid://i7eqduhb021h"]
 
 [ext_resource type="Texture2D" uid="uid://cmqe3daeqop3s" path="res://art/Legacy-Fantasy - High Forest 2.0 (1)/Legacy-Fantasy - High Forest 2.3/Assets/Tree-Assets.png" id="1_7vcio"]
 [ext_resource type="Script" path="res://tscn/script/world.gd" id="1_qdoun"]
@@ -6,6 +6,7 @@
 [ext_resource type="TileSet" uid="uid://catrw7xenm66f" path="res://sets/mush_tile_set.tres" id="3_1ntxh"]
 [ext_resource type="Texture2D" uid="uid://c0nrv2sr2cojc" path="res://art/Legacy-Fantasy - High Forest 2.0 (1)/Legacy-Fantasy - High Forest 2.3/Background/Background.png" id="4_lyurw"]
 [ext_resource type="Texture2D" uid="uid://dwa0bky6r6n8r" path="res://art/Legacy-Fantasy - High Forest 2.0 (1)/Legacy-Fantasy - High Forest 2.3/Trees/Background.png" id="5_kdlqh"]
+[ext_resource type="PackedScene" uid="uid://kokbchovvdu0" path="res://tscn/boar.tscn" id="7_2olcy"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dahlx"]
 texture = ExtResource("1_7vcio")
@@ -309,3 +310,6 @@ position = Vector2(139.5, 189)
 texture = ExtResource("5_kdlqh")
 region_enabled = true
 region_rect = Rect2(707, 16, 93, 240)
+
+[node name="Boar" parent="." instance=ExtResource("7_2olcy")]
+position = Vector2(475, 54)

@@ -28,6 +28,12 @@ window/stretch/mode="canvas_items"
 
 enabled=PackedStringArray("res://addons/com.timothyqiu.animation-resetter/plugin.cfg")
 
+[layer_names]
+
+2d_physics/layer_1="Env"
+2d_physics/layer_2="Player"
+2d_physics/layer_3="Emeny"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

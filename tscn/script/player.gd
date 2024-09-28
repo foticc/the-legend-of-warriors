@@ -147,13 +147,13 @@ func get_next_state(state:State)->State:
 	return state
 
 func transition_state(from:State,to:State):
-	print("[%s]from [%s]--->[%s]"%
-		[
-			Engine.get_physics_frames(),
-			State.keys()[from] if from != -1 else "START",
-			State.keys()[to]
-		]
-	)
+	#print("[%s]from [%s]--->[%s]"%
+		#[
+			#Engine.get_physics_frames(),
+			#State.keys()[from] if from != -1 else "START",
+			#State.keys()[to]
+		#]
+	#)
 	if from not in GROUND_STATES and to in GROUND_STATES:
 		timer.stop()
 	match to:
