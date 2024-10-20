@@ -1,3 +1,4 @@
+class_name Player
 extends CharacterBody2D
 
 enum State{
@@ -7,13 +8,19 @@ enum State{
 	FALL,
 	LANDING,
 	WALL_SLIDING,
-	WALL_JUMP
+	WALL_JUMP,
+	ATTACK_1,
+	ATTACK_2,
+	ATTACK_3
 }
 
 var default_gravity := ProjectSettings.get_setting("physics/2d/default_gravity") as float
 
 # 处在地板上的情况
-const GROUND_STATES:=[State.IDLE,State.RUNNING,State.LANDING]
+const GROUND_STATES:=[
+	State.IDLE,State.RUNNING,State.LANDING,
+	State.ATTACK_1,State.ATTACK_2,State.ATTACK_3
+]
 
 const SPEED = 300.0
 const JUMP_VELOCITY = -300.0
@@ -22,6 +29,10 @@ const AIR_A = SPEED/0.1
 const FLOOR_A = SPEED/0.2
 
 var is_first_frame := false
+
+@export var can_combo := false
+
+var is_combo_request := false
 
 @onready var graphics: Node2D = $Graphics
 @onready var hand_check: RayCast2D = $Graphics/HandCheck
@@ -47,6 +58,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		jump_request_timer.stop()
 		if velocity.y < JUMP_VELOCITY/2:
 			velocity.y = JUMP_VELOCITY/2
+	if event.is_action_pressed("attack"):
+		is_combo_request = true
 
 #func _physics_process(delta: float) -> void:
 	## Add the gravity.
@@ -108,15 +121,23 @@ func get_next_state(state:State)->State:
 	# Handle jump.
 	if should_jump:
 		return State.JUMP
+	
+	# 如果状态为在地板上的状态，但实际不在，进入下落状态
+	if state in GROUND_STATES and not is_on_floor():
+		return State.FALL
+
+		
 	var direction := Input.get_axis("ui_left", "ui_right")
 	var is_still := is_zero_approx(direction) and is_zero_approx(velocity.x)
 	match state:
 		State.IDLE:
+			if Input.is_action_pressed("attack"):
+				return State.ATTACK_1
 			if not is_still:
 				return State.RUNNING
 		State.RUNNING:
-			if not is_on_floor(): 
-				return State.FALL
+			if Input.is_action_pressed("attack"):
+				return State.ATTACK_1
 			if is_still:
 				return State.IDLE
 		State.JUMP:
@@ -144,6 +165,15 @@ func get_next_state(state:State)->State:
 				return State.WALL_SLIDING
 			if velocity.y >=0:
 				return State.FALL
+		State.ATTACK_1:
+			if not animation_player.is_playing():
+				return State.ATTACK_2 if is_combo_request else State.IDLE
+		State.ATTACK_2:
+			if not animation_player.is_playing():
+				return State.ATTACK_3 if is_combo_request else State.IDLE
+		State.ATTACK_3:
+			if not animation_player.is_playing():
+				return State.IDLE
 	return state
 
 func transition_state(from:State,to:State):
@@ -180,6 +210,15 @@ func transition_state(from:State,to:State):
 			velocity = WALL_JUMP_VELOCITY
 			velocity.x *= get_wall_normal().x 
 			jump_request_timer.stop()
+		State.ATTACK_1:
+			animation_player.play("attack_1")
+			is_combo_request = false
+		State.ATTACK_3:
+			animation_player.play("attack_2")
+			is_combo_request = false
+		State.ATTACK_3:
+			animation_player.play("attack_3")
+			is_combo_request = false
 	#if to==State.WALL_JUMP:
 		#Engine.time_scale = 0.3
 	#if from == State.WALL_JUMP:
@@ -208,6 +247,8 @@ func tick_physics(state:State,delta: float):
 				graphics.scale.x = get_wall_normal().x
 			else:
 				move(default_gravity,delta)
+		State.ATTACK_1,State.ATTACK_2,State.ATTACK_3:
+			stand(default_gravity,delta)
 	is_first_frame = false
 
 func move(gravity:float,delta:float):

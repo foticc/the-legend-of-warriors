@@ -10,6 +10,12 @@ enum State {
 @onready var floor_checker: RayCast2D = $Graphics/FloorChecker
 @onready var calm_down_timer: Timer = $CalmDownTimer
 
+# 是否能看见player 防止boar 透过墙检测到player进入RUN 状态
+func can_see_player() -> bool:
+	if not player_checker.is_colliding():
+		return false
+	return player_checker.get_collider() is Player
+
 func transition_state(from:State,to:State)->void:
 	print("[%s]from [%s]--->[%s]"%
 		[
@@ -32,7 +38,6 @@ func transition_state(from:State,to:State)->void:
 		State.RUN:
 			animation_player.play("run")
 
-
 func tick_physics(state:State,delta:float)->void:
 	match state:
 		State.IDLE:
@@ -44,11 +49,11 @@ func tick_physics(state:State,delta:float)->void:
 			if wall_checker.is_colliding() or not floor_checker.is_colliding():
 				direction *=-1
 			move(max_speed,delta)
-			if player_checker.is_colliding():
+			if can_see_player():
 				calm_down_timer.start()
 
 func get_next_state(state:State)->State:
-	if player_checker.is_colliding():
+	if can_see_player():
 		return State.RUN
 	match state:
 		State.IDLE:
@@ -62,3 +67,7 @@ func get_next_state(state:State)->State:
 			if calm_down_timer.is_stopped():
 				return State.WALK
 	return state
+
+
+func _on_hurt_box_hurt(hitbox: HitBox) -> void:
+	print("卧槽，你小子大胆！") #  # Replace with function body.
